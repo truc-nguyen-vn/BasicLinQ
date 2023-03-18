@@ -7,6 +7,10 @@ namespace BasicLinQ.Context
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext()
+        {
+            
+        }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option) : base(option)
         {
             
@@ -16,6 +20,14 @@ namespace BasicLinQ.Context
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=.;Database=BasicLinQ;Trusted_Connection=False;Encrypt=False;User Id=sa;Password=123456;MultipleActiveResultSets=true")
+                    .LogTo(Console.WriteLine, minimumLevel: LogLevel.Information);
+            }
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>(builder =>
