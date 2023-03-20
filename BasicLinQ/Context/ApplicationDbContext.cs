@@ -1,7 +1,5 @@
 ﻿using BasicLinQ.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BasicLinQ.Context
 {
@@ -9,11 +7,11 @@ namespace BasicLinQ.Context
     {
         public ApplicationDbContext()
         {
-            
+
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option) : base(option)
         {
-            
+
         }
 
         public DbSet<Product> Products { get; set; }

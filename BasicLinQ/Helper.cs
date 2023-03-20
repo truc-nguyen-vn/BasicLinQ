@@ -1,5 +1,4 @@
-﻿using BasicLinQ.Entities;
-using ConsoleTables;
+﻿using ConsoleTables;
 
 namespace BasicLinQ
 {
@@ -7,6 +6,9 @@ namespace BasicLinQ
     {
         public static void LogListData<T>(IEnumerable<T> list)
         {
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Log table:");
+            Console.ForegroundColor = ConsoleColor.Gray;
             ConsoleTable.From(list).Write();
         }
     }

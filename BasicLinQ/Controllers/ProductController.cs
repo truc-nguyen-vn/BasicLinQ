@@ -13,29 +13,88 @@ namespace BasicLinQ.Controllers
         [HttpGet]
         public IEnumerable<Product> Get([FromQuery] ProductRequestModel model)
         {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Get list Product by filters:");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
             using ApplicationDbContext context = new ApplicationDbContext();
 
             var productsQuery = from prod in context.Products
                                 select prod;
+            Helper.LogListData(productsQuery);
+
+            if (!string.IsNullOrEmpty(model.SearchTerm))
+            {
+                productsQuery = productsQuery.WhereWithTerm(x => x.Name.Contains(model.SearchTerm)).AsQueryable();
+                Helper.LogListData(productsQuery);
+            }
+
+            #region Log last execution
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Last execution:");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+            var result = productsQuery.Skip(model.Skip).Take(model.Take).ToList().AsEnumerable();
 
             if (model.IsSortSimple)
             {
-                productsQuery = productsQuery.AscendingSort();
-                Helper.LogListData(productsQuery);
-                productsQuery = productsQuery.DescendingSort();
-                Helper.LogListData(productsQuery);
+                result = result.AscendingSort();
+                Helper.LogListData(result);
+                result = result.DescendingSort();
+                Helper.LogListData(result);
 
             }
             if (model.IsSortUseThenBy)
             {
-                productsQuery = productsQuery.AscendingThenByDescendingSort();
-                Helper.LogListData(productsQuery);
-                productsQuery = productsQuery.DescendingThenByAscendingSort();
-                Helper.LogListData(productsQuery);
+                result = result.AscendingThenByDescendingSort();
+                Helper.LogListData(result);
+                result = result.DescendingThenByAscendingSort();
+                Helper.LogListData(result);
             }
 
+            return result;
+        }
 
-            return context.Products.ToArray();
+        [HttpGet("{id}")]
+        public IActionResult GetProductBySupplierId([FromRoute] int id)
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Get Product by Supplier id:");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new ApplicationDbContext();
+
+            Product detail = new();
+            var productQuery = context.Products.AsQueryable();
+            productQuery = productQuery.WhereWithTerm(x => x.SupplierId == id).AsQueryable();
+
+            if (productQuery.CheckExisted())
+            {
+                try
+                {
+                    detail = productQuery.SingleAndSingleDefault();
+                }
+                catch (Exception ex)
+                {
+                    #region Log SingleOrDefault() ex
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine("SingleOrDefault() exception: " + ex.Message);
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    #endregion 
+
+                    detail = productQuery.FirstAndFirstDefault();
+                }
+            }
+            else
+            {
+                detail = productQuery.FirstAndFirstDefault();
+            }
+
+            return Ok(detail);
         }
     }
 }
