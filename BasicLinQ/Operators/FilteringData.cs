@@ -1,27 +1,18 @@
 ﻿using System.Collections;
+using System.Linq.Expressions;
 
 namespace BasicLinQ.Operators
 {
     public static class FilteringData
     {
-        public static IEnumerable<T> WhereWithTerm<T>(this IQueryable<T> source, Func<T, bool> predicate)
+        public static IQueryable<T> WhereCustomize<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate)
         {
             #region Log Where()
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Filter by Where():");
             Console.ForegroundColor = ConsoleColor.Gray;
             #endregion
-
-            //return from item in source
-            //       where predicate
-            //       select item;
-            foreach (var item in source)
-            {
-                if (predicate(item))
-                {
-                    yield return item;
-                }
-            }
+            return source.Where(predicate);
         }
 
         public static IEnumerable<T> CheckOfType<T>(this IEnumerable source)

@@ -1,8 +1,10 @@
-﻿namespace BasicLinQ.Operators
+﻿using System.Linq.Expressions;
+
+namespace BasicLinQ.Operators
 {
     public static class Projection
     {
-        public static IEnumerable<TResult> SelectSimple<TSource, TResult>(this IQueryable<TSource> source, Func<TSource, int, TResult> selector)
+        public static IQueryable<TResult> SelectSimple<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, int, TResult>> selector)
         {
             #region Log Select()
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -12,7 +14,7 @@
 
             return source.Select(selector);
         }
-        public static IEnumerable<TResult> SelectManySimple<TSource, TResult>(this IQueryable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
+        public static IQueryable<TResult> SelectManySimple<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, IEnumerable<TResult>>> selector)
         {
             #region Log SelectMany()
             Console.ForegroundColor = ConsoleColor.DarkYellow;

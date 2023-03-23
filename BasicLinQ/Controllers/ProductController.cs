@@ -3,6 +3,7 @@ using BasicLinQ.Entities;
 using BasicLinQ.Models.Product;
 using BasicLinQ.Operators;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BasicLinQ.Controllers
 {
@@ -11,7 +12,7 @@ namespace BasicLinQ.Controllers
     public class ProductController : Controller
     {
         [HttpGet]
-        public IEnumerable<Product> Get([FromQuery] ProductRequestModel model)
+        public IActionResult Get([FromQuery] ProductRequestModel model)
         {
             #region Log start get
             Console.ForegroundColor = ConsoleColor.Green;
@@ -19,7 +20,7 @@ namespace BasicLinQ.Controllers
             Console.ForegroundColor = ConsoleColor.Gray;
             #endregion
 
-            using ApplicationDbContext context = new ApplicationDbContext();
+            using ApplicationDbContext context = new();
 
             var productsQuery = from prod in context.Products
                                 select prod;
@@ -27,7 +28,7 @@ namespace BasicLinQ.Controllers
 
             if (!string.IsNullOrEmpty(model.SearchTerm))
             {
-                productsQuery = productsQuery.WhereWithTerm(x => x.Name.Contains(model.SearchTerm)).AsQueryable();
+                productsQuery = productsQuery.WhereCustomize(x => x.Name.Contains(model.SearchTerm));
                 Helper.LogListData(productsQuery);
             }
 
@@ -36,7 +37,7 @@ namespace BasicLinQ.Controllers
             Console.WriteLine("Last execution:");
             Console.ForegroundColor = ConsoleColor.Gray;
             #endregion
-            var result = productsQuery.Skip(model.Skip).Take(model.Take).ToList().AsEnumerable();
+            IEnumerable<Product> result = productsQuery.Skip(model.Skip).Take(model.Take).ToList();
 
             if (model.IsSortSimple)
             {
@@ -54,7 +55,7 @@ namespace BasicLinQ.Controllers
                 Helper.LogListData(result);
             }
 
-            return result;
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -66,11 +67,11 @@ namespace BasicLinQ.Controllers
             Console.ForegroundColor = ConsoleColor.Gray;
             #endregion
 
-            using ApplicationDbContext context = new ApplicationDbContext();
+            using ApplicationDbContext context = new();
 
             Product detail = new();
             var productQuery = context.Products.AsQueryable();
-            productQuery = productQuery.WhereWithTerm(x => x.SupplierId == id).AsQueryable();
+            productQuery = productQuery.WhereCustomize(x => x.SupplierId == id);
 
             if (productQuery.CheckExisted())
             {
@@ -93,8 +94,49 @@ namespace BasicLinQ.Controllers
             {
                 detail = productQuery.FirstAndFirstDefault();
             }
+            Helper.LogListData(new Product[] { detail });
 
             return Ok(detail);
+        }
+
+        [HttpPost("product-by-categories-id")]
+        public IActionResult GetProductByCategoriesId([FromBody] int[] categoriesId)
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Get list Supplier is offering:");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsCategoriesQuery = context.ProductCategories
+                .Include(x => x.Products)
+                .WhereCustomize(x => categoriesId.Contains(x.Id));
+
+            var productsMethod = productsCategoriesQuery
+               .SelectMany(x => x.Products)
+               .ToList();
+            Helper.LogListData(productsMethod);
+
+            var productsSyntax = from category in productsCategoriesQuery
+                                 from product in category.Products
+                                 select product;
+            Helper.LogListData(productsSyntax);
+
+            var prodsOfCatesMethodQuery = context.ProductCategories
+                .Join(context.Products, cateProd => cateProd.Id, prod => prod.CategoryId, (cateProd, prod) => prod)
+                .WhereCustomize(x => categoriesId.Contains(x.Id));
+            Helper.LogListData(prodsOfCatesMethodQuery);
+
+            var prodsOfCatesSyntaxQuery = from cateProd in context.ProductCategories
+                                          join prod in context.Products on cateProd.Id equals prod.CategoryId
+                                          into cateProdJoined
+                                          from prodJoined in cateProdJoined.DefaultIfEmpty()
+                                          where categoriesId.Contains(prodJoined.CategoryId)
+                                          select prodJoined;
+            Helper.LogListData(prodsOfCatesMethodQuery);
+
+            return Ok();
         }
     }
 }

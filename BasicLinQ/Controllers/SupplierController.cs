@@ -6,6 +6,6 @@ namespace BasicLinQ.Controllers
     [ApiController]
     public class SupplierController : Controller
     {
-
+        
     }
 }
