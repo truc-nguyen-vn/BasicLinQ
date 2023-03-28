@@ -138,5 +138,57 @@ namespace BasicLinQ.Controllers
 
             return Ok();
         }
+
+        [HttpGet("products")]
+        public IActionResult GetProducts()
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Get Products by Supplier id:");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            var productsAny = productsQuery.Any(x => x.SupplierId == 1);
+
+            //All
+            var listProductCategory = listProduct.Where(x => x.CategoryId == 1);
+            var isContainAInProduct = listProductCategory.All(s => s.Name.Contains("a"));
+            Console.WriteLine("All: " + isContainAInProduct);
+
+            //Distinct
+            var listCategoryDistinct = listProduct.Select(s => s.CategoryId).Distinct();
+            Console.WriteLine("Distinct");
+            Helper.LogListData(listCategoryDistinct);
+
+            //Except
+            var listProductCate01 = listProduct.Where(x => x.Name == "a");
+            var listProductCate02 = listProduct.Where(x => x.Name == "e");
+            var listProductExcept = listProductCate01.Except(listProductCate02);
+            Console.WriteLine("Except");
+            Helper.LogListData(listProductExcept);
+
+            // Union
+            var listProductUnion = listProductCate02.Union(listProductCate01);
+            Console.WriteLine("Union");
+            Helper.LogListData(listProductUnion);
+
+            //SkipWhile 
+            var listProductSkipWhile = listProduct.SkipWhile(x => x.Name.Length > 10);
+            Console.WriteLine("SkipWhile");
+            Helper.LogListData(listProductSkipWhile);
+
+            //TakeWhile 
+            var listProductTakeWhile = listProduct.TakeWhile(x => x.Name.Length > 10);
+            Console.WriteLine("TakeWhile");
+            Helper.LogListData(listProductTakeWhile);
+
+            return Ok(productsQuery);
+        }
+
     }
 }
