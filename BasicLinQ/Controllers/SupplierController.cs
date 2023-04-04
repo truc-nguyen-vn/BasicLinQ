@@ -65,7 +65,7 @@ namespace BasicLinQ.Controllers
             var fileXML = new StreamWriter(memoryStream);
             writer.Serialize(fileXML, suppliers);
             fileXML.Close();
-            return File(memoryStream.GetBuffer().Where(x => x != 0).ToArray(), "text/xml", fileName);
+            return File(memoryStream.ToArray(), "text/xml", fileName);
         }
     }
 }
