@@ -140,11 +140,11 @@ namespace BasicLinQ.Controllers
         }
 
         [HttpGet("products")]
-        public IActionResult GetProducts()
+        public IActionResult GetListProduct()
         {
             #region Log start get
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Get Products by Supplier id:");
+
             Console.ForegroundColor = ConsoleColor.Gray;
             #endregion
 
@@ -153,41 +153,81 @@ namespace BasicLinQ.Controllers
 
             var listProduct = productsQuery.ToList();
 
-            var productsAny = productsQuery.Any(x => x.SupplierId == 1);
-
             //All
-            var listProductCategory = listProduct.Where(x => x.CategoryId == 1);
-            var isContainAInProduct = listProductCategory.All(s => s.Name.Contains("a"));
-            Console.WriteLine("All: " + isContainAInProduct);
+            var isContainAInProductEx1 = productsQuery.Where(x => x.CategoryId == 1).All(s => s.Name.Contains("a"));
+            Console.WriteLine("All: " + isContainAInProductEx1);
+
+            var isContainAInProductEx02 = listProduct.Where(x => x.CategoryId == 1).All(s => s.Name.Contains("a"));
+            Console.WriteLine("All: " + isContainAInProductEx02);
 
             //Distinct
-            var listCategoryDistinct = listProduct.Select(s => s.CategoryId).Distinct();
-            Console.WriteLine("Distinct");
-            Helper.LogListData(listCategoryDistinct);
+
+            var listProductDistinct01 = productsQuery.Select(s => s.Name).Distinct();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("List Product Distint 01");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            foreach (var product in listProductDistinct01)
+            {
+                Console.WriteLine(product);
+            }
+
+            var listCategoryDistinct02 = listProduct.Select(s => s.Name).Distinct();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("List Product Distint 02");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            foreach (var product in listCategoryDistinct02)
+            {
+                Console.WriteLine(product);
+            }
 
             //Except
-            var listProductCate01 = listProduct.Where(x => x.Name == "a");
-            var listProductCate02 = listProduct.Where(x => x.Name == "e");
-            var listProductExcept = listProductCate01.Except(listProductCate02);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Except");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductExcept01 = productsQuery.Where(x => x.Name.Contains("a"));
+            Helper.LogListData(listProductExcept01);
+            var listProductExcept02 = productsQuery.Where(x => x.Name.Contains("e"));
+            Helper.LogListData(listProductExcept02);
+            var listProductExceptEx = listProductExcept01.Except(listProductExcept02);
+            Helper.LogListData(listProductExceptEx);
+
+            var listProductExcept03 = listProduct.Where(x => x.Name.Contains("a"));
+            Helper.LogListData(listProductExcept03);
+            var listProductExcept04 = listProduct.Where(x => x.Name.Contains("e"));
+            Helper.LogListData(listProductExcept04);
+            var listProductExcept = listProductExcept03.Except(listProductExcept04);
             Helper.LogListData(listProductExcept);
 
-            // Union
-            var listProductUnion = listProductCate02.Union(listProductCate01);
+            //Union
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Union");
-            Helper.LogListData(listProductUnion);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductUnion01 = listProductExcept01.Union(listProductExcept02);
+            Helper.LogListData(listProductUnion01);
 
-            //SkipWhile 
-            var listProductSkipWhile = listProduct.SkipWhile(x => x.Name.Length > 10);
+            var listProductUnion02 = listProductExcept03.Union(listProductExcept04);
+            Helper.LogListData(listProductUnion02);
+
+            //SkipWhile
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("SkipWhile");
-            Helper.LogListData(listProductSkipWhile);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductSkipWhile01 = productsQuery.SkipWhile(x => x.Name.Length > 10);
+            Helper.LogListData(listProductSkipWhile01);
+
+            var listProductSkipWhile02 = listProduct.SkipWhile(x => x.Name.Length > 10);
+            Helper.LogListData(listProductSkipWhile02);
 
             //TakeWhile 
-            var listProductTakeWhile = listProduct.TakeWhile(x => x.Name.Length > 10);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("TakeWhile");
-            Helper.LogListData(listProductTakeWhile);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductTakeWhile01 = productsQuery.TakeWhile(x => x.Name.Length > 10);
+            Helper.LogListData(listProductSkipWhile01);
+            var listProductTakeWhile02 = listProduct.TakeWhile(x => x.Name.Length > 10);
+            Helper.LogListData(listProductTakeWhile02);
 
-            return Ok(productsQuery);
+            return Ok(listProduct);
         }
 
     }
