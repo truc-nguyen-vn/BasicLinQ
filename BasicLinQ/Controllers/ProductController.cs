@@ -153,6 +153,8 @@ namespace BasicLinQ.Controllers
 
             var listProduct = productsQuery.ToList();
 
+            var a = productsQuery.All(s => s.Name.Contains("a"));
+
             //All
             var isContainAInProductEx1 = productsQuery.Where(x => x.CategoryId == 1).All(s => s.Name.Contains("a"));
             Console.WriteLine("All: " + isContainAInProductEx1);
@@ -208,23 +210,31 @@ namespace BasicLinQ.Controllers
             var listProductUnion02 = listProductExcept03.Union(listProductExcept04);
             Helper.LogListData(listProductUnion02);
 
-            //SkipWhile
+            //Skip 
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Skip");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductSkipWhile01 = productsQuery.OrderBy(x => x.Name).Skip(10);
+            Helper.LogListData(listProductSkipWhile01);
+
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("SkipWhile");
             Console.ForegroundColor = ConsoleColor.Gray;
-            var listProductSkipWhile01 = productsQuery.SkipWhile(x => x.Name.Length > 10);
-            Helper.LogListData(listProductSkipWhile01);
-
             var listProductSkipWhile02 = listProduct.SkipWhile(x => x.Name.Length > 10);
             Helper.LogListData(listProductSkipWhile02);
 
-            //TakeWhile 
+            //Take
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Take");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductTakeWhile01 = productsQuery.OrderBy(x => x.Name).Take(5);
+            Helper.LogListData(listProductTakeWhile01);
+
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("TakeWhile");
             Console.ForegroundColor = ConsoleColor.Gray;
-            var listProductTakeWhile01 = productsQuery.TakeWhile(x => x.Name.Length > 10);
-            Helper.LogListData(listProductSkipWhile01);
-            var listProductTakeWhile02 = listProduct.TakeWhile(x => x.Name.Length > 10);
+            var listProductTakeWhile02 = listProduct.TakeWhile(x => x.Name.Length > 5);
             Helper.LogListData(listProductTakeWhile02);
 
             return Ok(listProduct);
