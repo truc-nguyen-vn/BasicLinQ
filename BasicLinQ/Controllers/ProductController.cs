@@ -138,5 +138,176 @@ namespace BasicLinQ.Controllers
 
             return Ok();
         }
+
+        [HttpGet("products-all-method")]
+        public IActionResult CheckAllProductOfCategoryIsContainLetter(int categoryId, string letter)
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("All");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            //All
+            var isContainAInProductEx1 = productsQuery.Where(x => x.CategoryId == categoryId).All(s => s.Name.Contains(letter));
+            Console.WriteLine("All: " + isContainAInProductEx1);
+
+            var isContainAInProductEx02 = listProduct.Where(x => x.CategoryId == categoryId).All(s => s.Name.Contains(letter));
+            Console.WriteLine("All: " + isContainAInProductEx02);
+
+            return Ok();
+        }
+
+        [HttpGet("products-distinct-name")]
+        public IActionResult GetProductDistinctName(int categoryId, string letter)
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Distinct");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            //Distinct
+            var listProductDistinct01 = productsQuery.Select(s => s.Name).Distinct();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("List Product Distint 01");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            foreach (var product in listProductDistinct01)
+            {
+                Console.WriteLine(product);
+            }
+
+            var listCategoryDistinct02 = listProduct.Select(s => s.Name).Distinct();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("List Product Distint 02");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            foreach (var product in listCategoryDistinct02)
+            {
+                Console.WriteLine(product);
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("products-union-supplier")]
+        public IActionResult GetProductUnionSupplier()
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Union");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            //Union
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Union");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductSupplier1 = productsQuery.Where(x => x.SupplierId == 1);
+            var listProductSupplier2 = productsQuery.Where(x => x.SupplierId == 2);
+
+            var listProductSupplierUnion = listProductSupplier1.Union(listProductSupplier2);
+            Helper.LogListData(listProductSupplierUnion);
+
+            var listProductSupplier01 = listProduct.Where(x => x.SupplierId == 1);
+            var listProductSupplier02 = listProduct.Where(x => x.SupplierId == 2);
+
+            var listProductSupplierUnion01 = listProductSupplier01.Union(listProductSupplier02);
+            Helper.LogListData(listProductSupplierUnion01);
+
+            return Ok();
+        }
+
+        [HttpGet("products-paging")]
+        public IActionResult GetProductsPaging()
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Paging");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Skip");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductSkipWhile01 = productsQuery.OrderBy(x => x.Name).Skip(10);
+            Helper.LogListData(listProductSkipWhile01);
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("SkipWhile");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductSkipWhile02 = listProduct.SkipWhile(x => x.Name.Length > 10);
+            Helper.LogListData(listProductSkipWhile02);
+
+            //Take
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Take");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductTakeWhile01 = productsQuery.OrderBy(x => x.Name).Take(5);
+            Helper.LogListData(listProductTakeWhile01);
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("TakeWhile");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductTakeWhile02 = listProduct.TakeWhile(x => x.Name.Length > 5);
+            Helper.LogListData(listProductTakeWhile02);
+
+            return Ok();
+        }
+
+        [HttpGet("products-except")]
+        public IActionResult GetListProductExcept()
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Paging");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            var listProduct = productsQuery.ToList();
+
+            //Except
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("Except");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            var listProductExcept01 = productsQuery.Where(x => x.Name.Contains("a"));
+            Helper.LogListData(listProductExcept01);
+            var listProductExcept02 = productsQuery.Where(x => x.Name.Contains("e"));
+            Helper.LogListData(listProductExcept02);
+            var listProductExceptEx = listProductExcept01.Except(listProductExcept02);
+            Helper.LogListData(listProductExceptEx);
+
+            var listProductExcept03 = listProduct.Where(x => x.Name.Contains("a"));
+            Helper.LogListData(listProductExcept03);
+            var listProductExcept04 = listProduct.Where(x => x.Name.Contains("e"));
+            Helper.LogListData(listProductExcept04);
+            var listProductExcept = listProductExcept03.Except(listProductExcept04);
+            Helper.LogListData(listProductExcept);
+
+            return Ok();
+        }
+
     }
 }
