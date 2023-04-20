@@ -4,6 +4,7 @@ using BasicLinQ.Models.Product;
 using BasicLinQ.Operators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BasicLinQ.Controllers
 {
@@ -308,6 +309,44 @@ namespace BasicLinQ.Controllers
 
             return Ok();
         }
+
+        [HttpGet("products-expression")]
+        public IActionResult GetListProductUseExpression()
+        {
+            #region Log start get
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Expression");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endregion
+
+            using ApplicationDbContext context = new();
+            var productsQuery = context.Products.AsQueryable();
+
+            Expression<Func<Product, bool>> isNameLength = s => s.Name.Length > 5 && s.Name.Length < 10;
+
+            var listProduct = productsQuery.Where(isNameLength);
+
+            Helper.LogListData(listProduct);
+
+            ParameterExpression para = Expression.Parameter(typeof(Product), "s");
+            MemberExpression me = Expression.Property(para, "Name");
+            ConstantExpression constant = Expression.Constant(5, typeof(int));
+            BinaryExpression body = Expression.GreaterThanOrEqual(me, constant);
+
+            var expressionTree = Expression.Lambda<Func<Product, bool>>(body, new[] { para });
+
+            Console.WriteLine("Expression Tree: {0}", expressionTree);
+
+            Console.WriteLine("Expression Tree Body: {0}", expressionTree.Body);
+
+            Console.WriteLine("Number of Parameters in Expression Tree: {0}",
+                                            expressionTree.Parameters.Count);
+
+            Console.WriteLine("Parameters in Expression Tree: {0}", expressionTree.Parameters[0]);
+
+            return Ok();
+        }
+
 
     }
 }
