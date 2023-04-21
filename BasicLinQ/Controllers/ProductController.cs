@@ -329,7 +329,7 @@ namespace BasicLinQ.Controllers
             Helper.LogListData(listProduct);
 
             ParameterExpression para = Expression.Parameter(typeof(Product), "s");
-            MemberExpression me = Expression.Property(para, "Name");
+            MemberExpression me = Expression.Property(Expression.Property(para, "Name"), "Length");
             ConstantExpression constant = Expression.Constant(5, typeof(int));
             BinaryExpression body = Expression.GreaterThanOrEqual(me, constant);
 
