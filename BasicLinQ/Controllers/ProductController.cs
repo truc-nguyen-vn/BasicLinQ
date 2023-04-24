@@ -329,11 +329,15 @@ namespace BasicLinQ.Controllers
             Helper.LogListData(listProduct);
 
             ParameterExpression para = Expression.Parameter(typeof(Product), "s");
-            MemberExpression me = Expression.Property(para, "Name");
-            ConstantExpression constant = Expression.Constant(5, typeof(int));
-            BinaryExpression body = Expression.GreaterThanOrEqual(me, constant);
+            MemberExpression me = Expression.Property(Expression.Property(para, "Name"), "Length");
 
-            var expressionTree = Expression.Lambda<Func<Product, bool>>(body, new[] { para });
+            ConstantExpression constant1 = Expression.Constant(5, typeof(int));
+            BinaryExpression body1 = Expression.GreaterThan(me, constant1);
+
+            ConstantExpression constant2 = Expression.Constant(10, typeof(int));
+            BinaryExpression body2 = Expression.LessThan(me, constant2);
+
+            var expressionTree = Expression.Lambda<Func<Product, bool>>(Expression.AndAlso(body1,body2), new[] { para });
 
             Console.WriteLine("Expression Tree: {0}", expressionTree);
 
