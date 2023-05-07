@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using BasicLinQ.Entities;
+using System.Collections;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace BasicLinQ.Operators
 {
@@ -39,6 +41,27 @@ namespace BasicLinQ.Operators
         {
             //var product = 
             return source.OfType<T>();
+        }
+
+        public static IQueryable<T> Get<T>(this IQueryable<T> source)
+        {
+            if (source == null)
+                throw new Exception("Source can be null");
+            if (typeof(T).IsSubclassOf(typeof(BaseEntity)))
+            {
+                PropertyInfo prop = typeof(T).GetProperty("IsDeleted");
+                if (prop != null)
+                {
+                    var parameter = Expression.Parameter(typeof(T));
+                    var property = Expression.Property(parameter, prop);
+                    var condition = Expression.Equal(Expression.Constant(false), property);
+                    var lambda = Expression.Lambda<Func<T, bool>>(condition, parameter);
+
+                    return source.Where(lambda);
+                }
+            }
+
+            return source;
         }
     }
 }

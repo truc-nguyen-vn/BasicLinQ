@@ -66,8 +66,8 @@ namespace BasicLinQ.Controllers
 
             using ApplicationDbContext context = new();
 
-            var productsJoin = context.ProductCategories
-                .Join(context.Products,
+            var productsJoin = context.ProductCategories.Get()
+                .Join(context.Products.Get(),
                     cateProd => cateProd.Id,
                     prod => prod.CategoryId,
                     (cateProd, prod) => prod)
@@ -75,6 +75,7 @@ namespace BasicLinQ.Controllers
                 .Select(x => new
                 {
                     x.Id,
+                    x.IsDeleted,
                     x.Name,
                     x.SupplierId,
                     x.CategoryId
@@ -91,6 +92,7 @@ namespace BasicLinQ.Controllers
                     Product = group.Select(x => new
                     {
                         x.Id,
+                        x.IsDeleted,
                         x.Name,
                         x.SupplierId,
                         x.CategoryId
@@ -99,7 +101,7 @@ namespace BasicLinQ.Controllers
                 .AsEnumerable()
                 .SelectMany(x => x.Product)
                 .ToList();
-            Helper.LogListData(productsJoin);
+            Helper.LogListData(productsGroupBy);
 
             var productsCategoriesQuery = context.ProductCategories
                 .Where(x => categoriesId.Contains(x.Id));

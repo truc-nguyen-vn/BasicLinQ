@@ -11,7 +11,7 @@ namespace QueryExecution
 
         public void ExecutionDeferred()
         {
-            var supplierFilterred = suppliers.WhereExecution(x => x.Id <= 2);
+            var supplierFilterred = suppliers.WhereExecutionStreaming(x => x.Id <= 2);
 
             Console.WriteLine("Deferred Streaming");
             foreach (var supplier in supplierFilterred)
@@ -36,7 +36,7 @@ namespace QueryExecution
         public void ExecutionImmediate()
         {
             Console.WriteLine("Immediate");
-            var supplierFilterred = suppliers.WhereExecution(x => x.Id <= 2).ToList();
+            var supplierFilterred = suppliers.WhereExecutionStreaming(x => x.Id <= 2).ToList();
 
             Console.WriteLine("Immediate 1");
             foreach (var supplier in supplierFilterred)            {
@@ -53,7 +53,7 @@ namespace QueryExecution
         
         public void ExecutionDeferredStreaming()
         {
-            var supplierFilterred = suppliers.WhereExecutionWithoutLog(x => x.Id <= 2);
+            var supplierFilterred = suppliers.WhereExecutionStreamingWithoutLog(x => x.Id <= 2);
 
             Console.WriteLine("Deferred Streaming");
             foreach (var supplier in supplierFilterred)
@@ -65,7 +65,7 @@ namespace QueryExecution
         
         public void ExecutionDeferredNonStreaming()
         {
-            var supplierFilterred = suppliers.WhereExecutionWithoutLog(x => x.Id <= 2);
+            var supplierFilterred = suppliers.WhereExecutionStreamingWithoutLog(x => x.Id <= 2);
           
             Console.WriteLine("\nDeferred Non-Streaming 1");
             foreach (var supplier in supplierFilterred.ToList())

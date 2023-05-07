@@ -2,7 +2,7 @@
 {
     public static class WhereExtension
     {
-        public static IEnumerable<T> WhereExecution<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static IEnumerable<T> WhereExecutionStreaming<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             #region Log Where()
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -22,7 +22,7 @@
             }
         }
 
-        public static IEnumerable<T> WhereExecutionWithoutLog<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static IEnumerable<T> WhereExecutionStreamingWithoutLog<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             #region Log Where()
             Console.ForegroundColor = ConsoleColor.DarkYellow;

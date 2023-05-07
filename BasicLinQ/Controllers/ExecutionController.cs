@@ -48,7 +48,7 @@ namespace BasicLinQ.Controllers
             }
 
             Console.WriteLine("Immediate 2");
-            foreach (var category in b.ToList())
+            foreach (var category in b)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }

@@ -1,8 +1,7 @@
 ﻿namespace BasicLinQ.Entities
 {
-    public class Supplier
+    public class Supplier : BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public virtual IEnumerable<Product> Products { get; set; }
         public virtual IEnumerable<ProductCategory> ProductCategories { get; set; }
