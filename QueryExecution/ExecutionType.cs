@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using QueryExecution.ExtensionMethods;
 
 namespace QueryExecution
 {
@@ -62,7 +63,6 @@ namespace QueryExecution
             Console.WriteLine();
         }
         
-        [Benchmark]
         public void ExecutionDeferredNonStreaming()
         {
             var supplierFilterred = suppliers.WhereExecutionWithoutLog(x => x.Id <= 2);

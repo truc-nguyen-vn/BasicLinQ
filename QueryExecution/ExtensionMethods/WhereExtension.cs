@@ -1,7 +1,6 @@
-﻿
-namespace QueryExecution
+﻿namespace QueryExecution.ExtensionMethods
 {
-    public static class ExtensionMethod
+    public static class WhereExtension
     {
         public static IEnumerable<T> WhereExecution<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
