@@ -7,7 +7,7 @@ using BasicLinQ.Entities;
 
 namespace BasicLinQ.Models.Supplier
 {
-    public class SupplierProductsModel
+    public class SupplierProductsTemplateXMLModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -29,5 +29,11 @@ namespace BasicLinQ.Models.Supplier
                 throw new NotImplementedException();
             }
         }
+    }
+    public class SupplierProductsModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public IEnumerable<ProductBasicModel> Products { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace BasicLinQ.Controllers
             var reader = new StreamReader(model.File.OpenReadStream());
             XElement xmlSuppliers = XElement.Load(reader);
             var suppliersProductQueryWithSyntax =
-                from item in xmlSuppliers.Descendants("SupplierProductsModel")
+                from item in xmlSuppliers.Descendants("SupplierProductsTemplateXMLModel")
                 where model.SuppliersId.Contains((int)item.Element("Id"))
                 select new SupplierProductsModel
                 {
@@ -45,7 +45,7 @@ namespace BasicLinQ.Controllers
             using ApplicationDbContext context = new();
             var suppliers = context.Suppliers
                 .Include(x => x.Products)
-                .Select(x => new SupplierProductsModel
+                .Select(x => new SupplierProductsTemplateXMLModel
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -60,7 +60,7 @@ namespace BasicLinQ.Controllers
                 .ToList();
             string fileName = "all-suppliers-include-products.xml";
             MemoryStream memoryStream = new();
-            var writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SupplierProductsModel>));
+            var writer = new System.Xml.Serialization.XmlSerializer(typeof(List<SupplierProductsTemplateXMLModel>));
 
             var fileXML = new StreamWriter(memoryStream);
             writer.Serialize(fileXML, suppliers);
