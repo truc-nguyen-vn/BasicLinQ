@@ -14,14 +14,14 @@ namespace BasicLinQ.Controllers
             Console.WriteLine("Deferred");
             using ApplicationDbContext context = new();
             var categories = context.ProductCategories;
-            var categoriesFilterred = categories.WhereExecution(x => x.Id <= 2);
+            var categoriesQuery = categories.WhereExecution(x => x.Id <= 2);
 
             Console.WriteLine("Deferred Streaming");
-            foreach (var category in categoriesFilterred) {
+            foreach (var category in categoriesQuery) {
                 Console.WriteLine("Category Id: " + category.Id);
             }
 
-            var listCategoriesFilterred = categoriesFilterred.ToList();
+            var listCategoriesFilterred = categoriesQuery.ToList();
 
             Console.WriteLine("\nDeferred Non-Streaming 1");
             foreach (var category in listCategoriesFilterred)
@@ -41,17 +41,17 @@ namespace BasicLinQ.Controllers
             using ApplicationDbContext context = new();
             var categories = context.ProductCategories;
 
-            var categoriesFilterred = categories.WhereExecution(x => x.Id <= 2);
-            var listCategoriesFilterred = categoriesFilterred.ToList();
+            var categoriesQuery = categories.WhereExecution(x => x.Id <= 2);
+            var listCategoriesFilterred = categoriesQuery.ToList();
 
             Console.WriteLine("\nDeferred Non-Streaming 1");
-            foreach (var category in categoriesFilterred)
+            foreach (var category in categoriesQuery)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }
 
             Console.WriteLine("\nDeferred Non-Streaming 1");
-            foreach (var category in categoriesFilterred)
+            foreach (var category in categoriesQuery)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }
