@@ -107,14 +107,26 @@ namespace BasicLinQ.Controllers
                 .Where(x => categoriesId.Contains(x.Id));
 
             var productsSelectMany = productsCategoriesQuery
-                .SelectMany(x => x.Products)
+                .SelectMany(x => x.Products.Select(x => new
+                {
+                    x.Id,
+                    x.IsDeleted,
+                    x.Name,
+                    x.SupplierId,
+                    x.CategoryId
+                }))
                 .ToList();
             Helper.LogListData(productsSelectMany);
 
             var productsSelect = productsCategoriesQuery
-                .Include(x => x.Products)
-                .AsEnumerable()
-                .Select(x => x.Products)
+                .Select(x => x.Products.Select(x => new
+                {
+                    x.Id,
+                    x.IsDeleted,
+                    x.Name,
+                    x.SupplierId,
+                    x.CategoryId
+                }))
                 .ToList();
 
             return Ok();

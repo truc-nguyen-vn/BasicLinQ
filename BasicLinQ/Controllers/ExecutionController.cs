@@ -1,4 +1,5 @@
-﻿using BasicLinQ.Operators;
+﻿using BasicLinQ.Context;
+using BasicLinQ.Operators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BasicLinQ.Controllers
@@ -10,25 +11,24 @@ namespace BasicLinQ.Controllers
         [HttpGet("deferred")]
         public IActionResult ExecutionDeferred()
         {
-            var categories = InitData.Categories;
-            var b = categories.WhereExecution(x => x.Id <= 2);
+            Console.WriteLine("Deferred");
+            using ApplicationDbContext context = new();
+            var categories = context.ProductCategories;
+            var categoriesFilterred = categories.WhereExecution(x => x.Id <= 2);
 
             Console.WriteLine("Deferred Streaming");
-            foreach (var category in b) {
+            foreach (var category in categoriesFilterred) {
                 Console.WriteLine("Category Id: " + category.Id);
             }
+
+            var listCategoriesFilterred = categoriesFilterred.ToList();
 
             Console.WriteLine("\nDeferred Non-Streaming 1");
-            foreach (var category in b.ToList())
+            foreach (var category in listCategoriesFilterred)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }
 
-            Console.WriteLine("\nDeferred Non-Streaming 2");
-            foreach (var category in b.ToList())
-            {
-                Console.WriteLine("Category Id: " + category.Id);
-            }
             Console.WriteLine();
 
             return Ok();
@@ -38,17 +38,32 @@ namespace BasicLinQ.Controllers
         public IActionResult ExecutionImmediate()
         {
             Console.WriteLine("Immediate");
-            var categories = InitData.Categories;
-            var b = categories.WhereExecution(x => x.Id <= 2).ToList();
+            using ApplicationDbContext context = new();
+            var categories = context.ProductCategories;
+
+            var categoriesFilterred = categories.WhereExecution(x => x.Id <= 2);
+            var listCategoriesFilterred = categoriesFilterred.ToList();
+
+            Console.WriteLine("\nDeferred Non-Streaming 1");
+            foreach (var category in categoriesFilterred)
+            {
+                Console.WriteLine("Category Id: " + category.Id);
+            }
+
+            Console.WriteLine("\nDeferred Non-Streaming 1");
+            foreach (var category in categoriesFilterred)
+            {
+                Console.WriteLine("Category Id: " + category.Id);
+            }
 
             Console.WriteLine("Immediate 1");
-            foreach (var category in b)
+            foreach (var category in listCategoriesFilterred)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }
 
             Console.WriteLine("Immediate 2");
-            foreach (var category in b)
+            foreach (var category in listCategoriesFilterred)
             {
                 Console.WriteLine("Category Id: " + category.Id);
             }

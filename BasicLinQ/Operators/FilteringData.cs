@@ -50,15 +50,12 @@ namespace BasicLinQ.Operators
             if (typeof(T).IsSubclassOf(typeof(BaseEntity)))
             {
                 PropertyInfo prop = typeof(T).GetProperty("IsDeleted");
-                if (prop != null)
-                {
-                    var parameter = Expression.Parameter(typeof(T));
-                    var property = Expression.Property(parameter, prop);
-                    var condition = Expression.Equal(Expression.Constant(false), property);
-                    var lambda = Expression.Lambda<Func<T, bool>>(condition, parameter);
+                var parameter = Expression.Parameter(typeof(T));
+                var property = Expression.Property(parameter, prop);
+                var condition = Expression.Equal(Expression.Constant(false), property);
+                var lambda = Expression.Lambda<Func<T, bool>>(condition, parameter);
 
-                    return source.Where(lambda);
-                }
+                return source.Where(lambda);
             }
 
             return source;
